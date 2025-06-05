@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build SFML",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "m.cpp",
+        "-o",
+        "m",
+        "-std=c++17",
+        "-DSFML_STATIC",
+        "-IC:/Users/Admin/SFML-3.0.0/include",
+        "-LC:/Users/Admin/SFML-3.0.0/lib",
+        "-lsfml-graphics-s",
+        "-lsfml-window-s",
+        "-lsfml-system-s",
+        "-lfreetype",
+        "-lopengl32",
+        "-lwinmm",
+        "-lgdi32",
+        "-luser32",
+        "-lshell32",
+        "-mwindows"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}

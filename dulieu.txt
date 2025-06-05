@@ -1,0 +1,53 @@
+19 30
+Toa C1
+Toa C2
+Toa C3
+Toa C4
+Toa C5
+Toa C6
+Toa C7
+Toa C8
+Toa C9
+Toa C10
+Toa D3
+Toa D4
+Toa D5
+Toa D6
+Toa D7
+Toa D8
+Toa D9
+Thu Vien
+Nha TC
+Toa C1 Toa C2 50
+Toa C2 Toa C3 60
+Toa C3 Toa C4 40
+Toa C4 Toa C5 55
+Toa C5 Toa C6 45
+Toa C6 Toa C7 70
+Toa C7 Toa C8 65
+Toa C8 Toa C9 50
+Toa C9 Toa C10 55
+Toa C1 Toa C3 80
+Toa C2 Toa C4 75
+Toa C3 Toa C5 85
+Toa C4 Toa C6 90
+Toa C5 Toa C7 95
+Toa C6 Toa C8 100
+Toa C7 Toa C9 85
+Toa C8 Toa C10 80
+Toa D3 Toa D4 45
+Toa D4 Toa D5 50
+Toa D5 Toa D6 55
+Toa D6 Toa D7 60
+Toa D7 Toa D8 65
+Toa D8 Toa D9 70
+Toa C1 Toa D3 120
+Toa C3 Toa D5 130
+Toa C5 Toa D7 140
+Toa C7 Toa D9 150
+Toa C9 Toa D4 125
+Toa C2 Toa D6 135
+Toa C4 Toa D8 145
+Toa C6 Toa D3 155
+Toa C8 Toa D5 165
+Toa C10 Toa D7 175

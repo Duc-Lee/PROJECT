@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bản Đồ HUST - Đường đi ngắn nhất</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body { 
+            background: #f8f9fa; 
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px;
+        }
+        .map-container { 
+            height: 600px; 
+            margin-top: 20px; 
+            border-radius: 10px; 
+            overflow: hidden; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+        }
+        .form-container { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+        }
+        .result-container { 
+            margin-top: 20px; 
+            display: none; 
+        }
+        #map { 
+            width: 100%; 
+            height: 600px; 
+        }
+        .start-marker { 
+            font-size: 24px; 
+        }
+        .end-marker { 
+            font-size: 24px; 
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+        }
+        .error-message {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .success-message {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .card {
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .form-select:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Bản Đồ HUST - Đường đi ngắn nhất</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-container">
+                    <form id="pathForm">
+                        <div class="mb-3">
+                            <label for="source" class="form-label">Điểm đi:</label>
+                            <select class="form-select" id="source" name="source" required>
+                                <option value="">Chọn điểm đi</option>
+                                <option value="Toa C1">Toa C1</option>
+                                <option value="Toa C2">Toa C2</option>
+                                <option value="Toa C3">Toa C3</option>
+                                <option value="Toa C4">Toa C4</option>
+                                <option value="Toa C5">Toa C5</option>
+                                <option value="Toa C6">Toa C6</option>
+                                <option value="Toa C7">Toa C7</option>
+                                <option value="Toa C8">Toa C8</option>
+                                <option value="Toa C9">Toa C9</option>
+                                <option value="Toa C10">Toa C10</option>
+                                <option value="Toa D3">Toa D3</option>
+                                <option value="Toa D4">Toa D4</option>
+                                <option value="Toa D5">Toa D5</option>
+                                <option value="Toa D6">Toa D6</option>
+                                <option value="Toa D7">Toa D7</option>
+                                <option value="Toa D8">Toa D8</option>
+                                <option value="Toa D9">Toa D9</option>
+                                <option value="Thu Vien">Thu Vien</option>
+                                <option value="Nha TC">Nha TC</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="destination" class="form-label">Điểm đến:</label>
+                            <select class="form-select" id="destination" name="destination" required>
+                                <option value="">Chọn điểm đến</option>
+                                <option value="Toa C1">Toa C1</option>
+                                <option value="Toa C2">Toa C2</option>
+                                <option value="Toa C3">Toa C3</option>
+                                <option value="Toa C4">Toa C4</option>
+                                <option value="Toa C5">Toa C5</option>
+                                <option value="Toa C6">Toa C6</option>
+                                <option value="Toa C7">Toa C7</option>
+                                <option value="Toa C8">Toa C8</option>
+                                <option value="Toa C9">Toa C9</option>
+                                <option value="Toa C10">Toa C10</option>
+                                <option value="Toa D3">Toa D3</option>
+                                <option value="Toa D4">Toa D4</option>
+                                <option value="Toa D5">Toa D5</option>
+                                <option value="Toa D6">Toa D6</option>
+                                <option value="Toa D7">Toa D7</option>
+                                <option value="Toa D8">Toa D8</option>
+                                <option value="Toa D9">Toa D9</option>
+                                <option value="Thu Vien">Thu Vien</option>
+                                <option value="Nha TC">Nha TC</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Tìm đường đi</button>
+                    </form>
+                    <div class="loading">
+                        <div class="spinner-border loading-spinner text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Đang tìm đường đi...</p>
+                    </div>
+                    <div class="error-message" id="errorMessage"></div>
+                    <div class="success-message" id="successMessage"></div>
+                </div>
+                <div class="result-container" id="resultContainer">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Kết quả</h5>
+                            <p class="card-text">
+                                <strong>Đường đi:</strong> <span id="pathResult"></span><br />
+                                <strong>Khoảng cách:</strong> <span id="distanceResult"></span> mét
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Danh sách tọa độ các tòa nhà
+        var locations = {
+            "Toa C1": [21.00700251977763, 105.84312059532897],
+            "Toa C2": [21.00657101185019, 105.84244914140854],
+            "Toa C3": [21.006636637466436, 105.84383986442501],
+            "Toa C4": [21.006205958051957, 105.84380231350325],
+            "Toa C5": [21.00579349880187, 105.84406992456093],
+            "Toa C6": [21.006665164580117, 105.84473468261287],
+            "Toa C7": [21.005289511288062, 105.84517981529504],
+            "Toa C8": [21.006220787398348, 105.84498695048319],
+            "Toa C9": [21.005814896289955, 105.84192614358128],
+            "Toa C10": [21.005527287669175, 105.84362514658626],
+            "Toa D3": [21.004798431408904, 105.8446734279063],
+            "Toa D4": [21.004263447178527, 105.84207391594293],
+            "Toa D5": [21.00441977800511, 105.8448703745154],
+            "Toa D6": [21.004366316246806, 105.84269679345529],
+            "Toa D7": [21.00411524117634, 105.84484590559596],
+            "Toa D8": [21.00398610272683, 105.8429580396666],
+            "Toa D9": [21.003823965593302, 105.84446633668058],
+            "Thu Vien": [21.004461859026915, 105.84398406359864],
+            "Nha TC": [21.006480, 105.845170]
+        };
+
+        var map = L.map('map').setView([21.006382, 105.843568], 17);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+        var pathLayer = null;
+        var markers = [];
+
+        function showError(message) {
+            $('#errorMessage').text(message).show();
+            $('#successMessage').hide();
+            setTimeout(() => {
+                $('#errorMessage').fadeOut();
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            $('#successMessage').text(message).show();
+            $('#errorMessage').hide();
+            setTimeout(() => {
+                $('#successMessage').fadeOut();
+            }, 5000);
+        }
+
+        function drawPathOnMap(path) {
+            // Xóa layer cũ nếu có
+            if (pathLayer) {
+                map.removeLayer(pathLayer);
+                pathLayer = null;
+            }
+            // Xóa các marker cũ
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            if (path && path.length > 0) {
+                try {
+                    // Tạo mảng tọa độ từ tên các điểm
+                    let coords = path.map(name => {
+                        if (!locations[name]) {
+                            console.error('Không tìm thấy tọa độ cho:', name);
+                            return null;
+                        }
+                        return locations[name];
+                    }).filter(coord => coord !== null);
+
+                    if (coords.length > 1) {
+                        // Vẽ đường đi
+                        pathLayer = L.polyline(coords, {
+                            color: 'red',
+                            weight: 5,
+                            opacity: 0.8,
+                            lineJoin: 'round'
+                        }).addTo(map);
+
+                        // Thêm marker cho điểm bắt đầu và kết thúc
+                        let startMarker = L.marker(coords[0], {
+                            icon: L.divIcon({
+                                className: 'start-marker',
+                                html: '🚶'
+                            })
+                        }).addTo(map).bindPopup('Điểm bắt đầu: ' + path[0]);
+
+                        let endMarker = L.marker(coords[coords.length - 1], {
+                            icon: L.divIcon({
+                                className: 'end-marker',
+                                html: '🎯'
+                            })
+                        }).addTo(map).bindPopup('Điểm kết thúc: ' + path[path.length - 1]);
+
+                        markers.push(startMarker, endMarker);
+
+                        // Zoom map để hiển thị toàn bộ đường đi
+                        map.fitBounds(pathLayer.getBounds(), {
+                            padding: [50, 50]
+                        });
+                    } else {
+                        console.error('Không đủ điểm để vẽ đường đi');
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi vẽ đường đi:', error);
+                    showError('Lỗi khi vẽ đường đi trên bản đồ');
+                }
+            }
+        }
+
+        // Thêm sự kiện khi chọn điểm đi/đến
+        $('#source, #destination').on('change', function() {
+            var selectedValue = $(this).val();
+            if (selectedValue && locations[selectedValue]) {
+                map.setView(locations[selectedValue], 18);
+            }
+        });
+
+        // Hàm để kiểm tra kết quả mới
+        function checkForNewResult() {
+            $.ajax({
+                url: '/get_result',
+                method: 'GET',
+                success: function(response) {
+                    if (response.error) {
+                        console.error('Error:', response.error);
+                        return;
+                    }
+                    
+                    // Hiển thị kết quả
+                    $('#pathResult').text(response.path.join(' → '));
+                    $('#distanceResult').text(response.distance);
+                    $('#resultContainer').show();
+                    showSuccess('Tìm đường đi thành công!');
+
+                    // Vẽ đường đi trên bản đồ
+                    drawPathOnMap(response.path);
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status !== 404) {  // Bỏ qua lỗi 404 (chưa có kết quả)
+                        console.error('Error:', error);
+                    }
+                }
+            });
+        }
+
+        // Bắt đầu polling khi form được submit
+        var pollingInterval;
+        $('#pathForm').on('submit', function(e) {
+            e.preventDefault();
+
+            var source = $('#source').val();
+            var destination = $('#destination').val();
+
+            if (!source || !destination) {
+                showError('Vui lòng chọn đầy đủ điểm đi và điểm đến!');
+                return;
+            }
+            if (source === destination) {
+                showError('Điểm đi và điểm đến phải khác nhau!');
+                return;
+            }
+
+            // Hiển thị loading
+            $('#resultContainer').hide();
+            $('.loading').show();
+            $('button[type="submit"]').prop('disabled', true);
+
+            // Gửi request AJAX tới backend
+            $.ajax({
+                url: '/find_path',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ source: source, destination: destination }),
+                success: function(response) {
+                    if (response.error) {
+                        showError(response.error);
+                        return;
+                    }
+                    
+                    // Bắt đầu polling cho kết quả mới
+                    if (pollingInterval) {
+                        clearInterval(pollingInterval);
+                    }
+                    pollingInterval = setInterval(checkForNewResult, 1000);  // Kiểm tra mỗi giây
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    showError('Lỗi khi kết nối tới server. Vui lòng thử lại.');
+                },
+                complete: function() {
+                    // Reset trạng thái
+                    $('.loading').hide();
+                    $('button[type="submit"]').prop('disabled', false);
+                }
+            });
+        });
+
+        // Dừng polling khi rời khỏi trang
+        $(window).on('beforeunload', function() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+        });
+
+        // Khởi tạo map với marker tất cả toà nhà
+        Object.entries(locations).forEach(([name, coord]) => {
+            L.marker(coord).addTo(map).bindPopup(name);
+        });
+    </script>
+</body>
+</html>
